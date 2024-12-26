@@ -1,0 +1,1 @@
+This project follows the steps indicated in react.dev tutorial using TS
