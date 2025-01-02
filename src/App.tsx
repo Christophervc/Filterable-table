@@ -25,6 +25,10 @@ interface ProductTableProps {
   inStockOnly: boolean;
 }
 
+interface ProductFormProps {
+  onAddProduct: (product: Product) => void;
+}
+
 const products: Product[] = [
   { category: "Fruits", price: "$1", stocked: true, name: "Apple" },
   { category: "Fruits", price: "$1", stocked: true, name: "Dragon fruit" },
@@ -92,8 +96,8 @@ function ProductTable({
     <table>
       <thead>
         <tr>
-          <th>Nombre</th>
-          <th>Precio</th>
+          <th>Name</th>
+          <th>Price</th>
         </tr>
       </thead>
       <tbody>{rows}</tbody>
@@ -111,7 +115,7 @@ function SearchBar({
     <form>
       <input
         type="text"
-        placeholder="Buscar..."
+        placeholder="Search..."
         value={filterText}
         onChange={(e) => onFilterTextChange(e.target.value)}
       />
@@ -121,7 +125,7 @@ function SearchBar({
           checked={inStockOnly}
           onChange={(e) => onInStockOnlyChange(e.target.checked)}
         />{" "}
-        Mostrar solo productos en stock
+        Show only in stock
       </label>
     </form>
   );
@@ -148,9 +152,67 @@ function FilterableProductTable({ products }: FilterableProductTableProps) {
   );
 }
 
+function ProductForm({ onAddProduct }: ProductFormProps) {
+  const [productName, setProductName] = useState<string>("");
+  const [productPrice, setProductPrice] = useState<string>("");
+  const [productStocked, setProductStocked] = useState<boolean>(true);
+  const [productCategory, setProductCategory] = useState<string>("Fruits");
+  const HandleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    onAddProduct({
+      name: productName,
+      price: productPrice,
+      stocked: productStocked,
+      category: productCategory,
+    });
+    setProductName("");
+    setProductPrice("");
+    setProductStocked(true);
+    setProductCategory("Fruits");
+  };
+
+  return (
+    <form onSubmit={HandleSubmit}>
+      <label htmlFor="name">Name</label>
+      <input
+        id="name"
+        type="text"
+        value={productName}
+        onChange={(e) => setProductName(e.target.value)}
+      />
+      <label htmlFor="price">Price</label>
+      <input
+        id="price"
+        type="text"
+        value={productPrice}
+        onChange={(e) => setProductPrice(e.target.value)}
+      />
+      <label htmlFor="stocked">Stocked</label>
+      <input
+        id="stocked"
+        type="checkbox"
+        checked={productStocked}
+        onChange={(e) => setProductStocked(e.target.checked)}
+      />
+      <label htmlFor="category">Category</label>
+      <select
+        id="category"
+        value={productCategory}
+        onChange={(e) => setProductCategory(e.target.value)}
+      >
+        <option value="Fruits">Fruits</option>
+        <option value="Vegetables">Vegetables</option>
+      </select>
+      <button>Add Product</button>
+    </form>
+  );
+}
+
 function App() {
+
   return (
     <>
+      <ProductForm onAddProduct={(product) => console.log(product)}  />
       <FilterableProductTable products={products} />
     </>
   );
