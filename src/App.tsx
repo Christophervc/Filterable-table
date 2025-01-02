@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 interface Product {
@@ -29,17 +29,6 @@ interface ProductFormProps {
   onAddProduct: (product: Product) => void;
 }
 
-const products: Product[] = [
-  { category: "Fruits", price: "$1", stocked: true, name: "Apple" },
-  { category: "Fruits", price: "$1", stocked: true, name: "Dragon fruit" },
-  { category: "Fruits", price: "$2", stocked: false, name: "Passion fruit" },
-  { category: "Fruits", price: "$1", stocked: true, name: "Grapes" },
-  { category: "Vegetables", price: "$2", stocked: true, name: "Spinach" },
-  { category: "Vegetables", price: "$4", stocked: false, name: "Pumpkin" },
-  { category: "Vegetables", price: "$1", stocked: true, name: "Avocado" },
-  { category: "Vegetables", price: "$1", stocked: true, name: "Onion" },
-  { category: "Vegetables", price: "$1", stocked: false, name: "Tomato" },
-];
 
 function ProductCategoryRow({ category }: { category: string }) {
   return (
@@ -156,7 +145,7 @@ function ProductForm({ onAddProduct }: ProductFormProps) {
   const [productName, setProductName] = useState<string>("");
   const [productPrice, setProductPrice] = useState<string>("");
   const [productStocked, setProductStocked] = useState<boolean>(true);
-  const [productCategory, setProductCategory] = useState<string>("Fruits");
+  const [productCategory, setProductCategory] = useState<string>("");
   const HandleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     onAddProduct({
@@ -209,10 +198,33 @@ function ProductForm({ onAddProduct }: ProductFormProps) {
 }
 
 function App() {
+  const [products, setProducts] = useState<Product[]>(() => {
+    const savedProducts = localStorage.getItem("products");
+    return savedProducts ? JSON.parse(savedProducts) : [];
+  });
+
+  useEffect(() => {
+    const savedProducts = localStorage.getItem("products");
+    if (savedProducts) {
+      setProducts(JSON.parse(savedProducts));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("products", JSON.stringify(products));
+  }, [products]);
+
+  const AddProduct = (newProduct: Product) => {
+    if (products.find((product) => product.name === newProduct.name)) {
+      return alert("Product already exists");
+    }
+    const updatedProducts = setProducts([...products, newProduct]);
+    localStorage.setItem("products", JSON.stringify(updatedProducts));
+  };
 
   return (
     <>
-      <ProductForm onAddProduct={(product) => console.log(product)}  />
+      <ProductForm onAddProduct={AddProduct} />
       <FilterableProductTable products={products} />
     </>
   );
