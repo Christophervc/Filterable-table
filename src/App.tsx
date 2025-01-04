@@ -1,34 +1,13 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-
-interface Product {
-  category: string;
-  price: string;
-  stocked: boolean;
-  name: string;
-}
-
-interface FilterableProductTableProps {
-  products: Product[];
-}
-
-interface SearchBarProps {
-  filterText: string;
-  inStockOnly: boolean;
-  onFilterTextChange: (text: string) => void;
-  onInStockOnlyChange: (checked: boolean) => void;
-}
-
-interface ProductTableProps {
-  products: Product[];
-  filterText: string;
-  inStockOnly: boolean;
-}
-
-interface ProductFormProps {
-  onAddProduct: (product: Product) => void;
-}
-
+import "./index.css";
+import {
+  Product,
+  ProductFormProps,
+  ProductTableProps,
+  SearchBarProps,
+  FilterableProductTableProps,
+} from "./types";
 
 function ProductCategoryRow({ category }: { category: string }) {
   return (
@@ -145,7 +124,8 @@ function ProductForm({ onAddProduct }: ProductFormProps) {
   const [productName, setProductName] = useState<string>("");
   const [productPrice, setProductPrice] = useState<string>("");
   const [productStocked, setProductStocked] = useState<boolean>(true);
-  const [productCategory, setProductCategory] = useState<string>("");
+  const [productCategory, setProductCategory] = useState<string>("Fruits");
+
   const HandleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     onAddProduct({
@@ -154,6 +134,7 @@ function ProductForm({ onAddProduct }: ProductFormProps) {
       stocked: productStocked,
       category: productCategory,
     });
+
     setProductName("");
     setProductPrice("");
     setProductStocked(true);
@@ -161,39 +142,41 @@ function ProductForm({ onAddProduct }: ProductFormProps) {
   };
 
   return (
-    <form onSubmit={HandleSubmit}>
-      <label htmlFor="name">Name</label>
-      <input
-        id="name"
-        type="text"
-        value={productName}
-        onChange={(e) => setProductName(e.target.value)}
-      />
-      <label htmlFor="price">Price</label>
-      <input
-        id="price"
-        type="text"
-        value={productPrice}
-        onChange={(e) => setProductPrice(e.target.value)}
-      />
-      <label htmlFor="stocked">Stocked</label>
-      <input
-        id="stocked"
-        type="checkbox"
-        checked={productStocked}
-        onChange={(e) => setProductStocked(e.target.checked)}
-      />
-      <label htmlFor="category">Category</label>
-      <select
-        id="category"
-        value={productCategory}
-        onChange={(e) => setProductCategory(e.target.value)}
-      >
-        <option value="Fruits">Fruits</option>
-        <option value="Vegetables">Vegetables</option>
-      </select>
-      <button>Add Product</button>
-    </form>
+    <div className="product-form">
+      <form onSubmit={HandleSubmit}>
+        <label htmlFor="name">Name</label>
+        <input
+          id="name"
+          type="text"
+          value={productName}
+          onChange={(e) => setProductName(e.target.value)}
+        />
+        <label htmlFor="price">Price</label>
+        <input
+          id="price"
+          type="text"
+          value={productPrice}
+          onChange={(e) => setProductPrice(e.target.value)}
+        />
+        <label htmlFor="stocked">Stocked</label>
+        <input
+          id="stocked"
+          type="checkbox"
+          checked={productStocked}
+          onChange={(e) => setProductStocked(e.target.checked)}
+        />
+        <label htmlFor="category">Category</label>
+        <select
+          id="category"
+          value={productCategory}
+          onChange={(e) => setProductCategory(e.target.value)}
+        >
+          <option value="Fruits">Fruits</option>
+          <option value="Vegetables">Vegetables</option>
+        </select>
+        <button>Add Product</button>
+      </form>
+    </div>
   );
 }
 
